@@ -2,7 +2,8 @@ import os
 import json
 import time
 from google.cloud import storage
-from google import generativeai as genai
+import google.generativeai as genai
+
 from flask import Flask, request, redirect
 
 # Configuration
