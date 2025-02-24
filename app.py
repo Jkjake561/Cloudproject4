@@ -3,8 +3,9 @@ import json
 import time
 from google.cloud import storage
 import google.generativeai as genai
-
 from flask import Flask, request, redirect
+from google.oauth2 import service_account
+
 
 # Configuration
 BUCKET_NAME = "uploaded_images_bucket"  # Cloud Storage bucket name
@@ -12,6 +13,17 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable is not set.")
 
+
+
+#credentials = service_account.Credentials.from_service_account_file(
+#    '/home/jacobkahn1996/Cloudproject2/key.json'
+#)
+#storage_client = storage.Client(credentials=credentials)
+
+
+
+# For deployment, simply use:
+storage_client = storage.Client()
 # Configure Gemini AI Client with API Key
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
@@ -19,6 +31,11 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 # Initialize Google Cloud Storage client
 storage_client = storage.Client()
 app = Flask(__name__)
+
+# **Health Check Route:** Adds a simple health check endpoint
+@app.route('/healthz')
+def healthz():
+    return jsonify(status='healthy'), 200
 
 # **Upload Route:** Handles image uploads and caption generation
 @app.route('/upload', methods=["POST"])

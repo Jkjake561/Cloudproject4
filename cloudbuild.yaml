@@ -13,7 +13,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'flask-app'
+      - 'flash-app2-ai'  # Updated to match your Cloud Run service name
       - '--image'
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app'
       - '--region'
