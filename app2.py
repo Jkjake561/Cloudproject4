@@ -7,6 +7,7 @@ from flask import Flask, request, redirect, jsonify, abort
 import logging
 from google.auth import default
 from google.auth.transport import requests as google_requests
+from flask import Response
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -60,6 +61,17 @@ def generate_gemini_caption(image_file):
 def healthz():
     return jsonify(status='healthy'), 200
 
+@app.route("/images/<filename>")
+def serve_image(filename):
+    bucket = storage_client.bucket(BUCKET_NAME)
+    blob = bucket.blob(filename)
+    try:
+        image_data = blob.download_as_bytes()
+        return Response(image_data, mimetype="image/jpeg")
+    except Exception as e:
+        logging.error(f"Error serving image {filename}: {e}")
+        abort(404)
+
 @app.route('/upload', methods=["POST"])
 def upload():
     if 'form_file' not in request.files:
@@ -103,7 +115,8 @@ def list_files():
             if json_blob.exists():
                 data = json.loads(json_blob.download_as_text())
                 caption = f"<strong>Title:</strong> {data.get('title')}<br><strong>Description:</strong> {data.get('description')}"
-            html += f'<li><img src="{signed_url}" alt="{blob.name}" style="max-width:200px;"><br>{caption}</li>'
+            html += f'<li><img src="/images/{blob.name}" alt="{blob.name}" style="max-width:200px;"><br>{caption}</li>'
+
     html += "</ul><br><a href='/'>Go Back</a>"
     return html
 
