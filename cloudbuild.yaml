@@ -1,28 +1,30 @@
 steps:
   # Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app3', '.']
 
   # Push the Docker image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app']
+    args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app3']
 
-  # Deploy to Cloud Run
+  # Deploy to Cloud Run with secret and env var
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
-      - 'flash-app2-ai'  # Updated to match your Cloud Run service name
+      - 'flask-app3'  # <-- Use a new Cloud Run service for Project 3
       - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app3'
       - '--region'
       - 'us-central1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--update-env-vars'
-      - 'BUCKET_NAME=uploaded_images_bucket'
+      - '--set-secrets'
+      - 'GEMINI_API_KEY=gemini-api-key:latest'
+      - '--set-env-vars'
+      - 'BUCKET_NAME=project3-uploaded-images-1742746136'
 
 images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/flask-app3'

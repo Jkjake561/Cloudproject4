@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 # ----- CONFIGURATION -----
-BUCKET_NAME = "uploaded_images_bucket"
+BUCKET_NAME = "project3-uploaded-images-1742746136"
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable is not set.")
