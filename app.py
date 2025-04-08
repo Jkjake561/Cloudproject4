@@ -109,6 +109,7 @@ def index():
     """
     # HTML header + Upload form
     html = """
+    <body style="background-color: #007BFF;">
     <h1>Image Upload with Gemini AI Captions</h1>
     <form method="post" enctype="multipart/form-data" action="/upload">
         <input type="file" name="form_file" accept="image/jpeg" required>
